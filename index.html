@@ -2,33 +2,59 @@
 <html lang="ka">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>BARE by Biograpi · 360°</title>
+<link rel="stylesheet" href="pannellum.css">
 <style>
-  :root{--bg:#7C3146;--card:#1B1521;--txt:#EDE7D1;--mut:#c9a9b3;}
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--txt);
-    font-family:-apple-system,Segoe UI,Roboto,'Noto Sans Georgian',sans-serif;
-    min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px}
-  .logo{height:66px;width:auto;margin-bottom:26px;filter:drop-shadow(0 4px 14px rgba(0,0,0,.35))}
-  p.sub{color:var(--mut);margin:0 0 26px;font-size:14px;letter-spacing:.02em}
-  .grid{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;width:100%;max-width:720px}
-  a.card{flex:1 1 300px;text-decoration:none;color:var(--txt);background:var(--card);
-    border:1px solid rgba(237,231,209,.14);border-radius:16px;padding:22px;transition:.18s;display:block}
-  a.card:hover{border-color:var(--txt);transform:translateY(-2px)}
-  .card .num{font-size:12px;color:var(--mut);font-weight:700;letter-spacing:.12em}
-  .card .title{font-size:17px;font-weight:700;margin-top:6px}
-  .card .go{margin-top:14px;color:var(--mut);font-size:13px}
-  footer{margin-top:28px;color:var(--mut);font-size:12px;letter-spacing:.04em}
+  html,body{margin:0;padding:0;height:100%;background:#7C3146;overflow:hidden;}
+  #pano{width:100%;height:100vh;background:#7C3146;}
+  .bare-logo{position:absolute;top:16px;left:16px;z-index:6;height:52px;width:auto;
+    filter:drop-shadow(0 3px 10px rgba(0,0,0,.45));pointer-events:none;user-select:none;}
+  /* view switcher on the image */
+  .view-switch{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
+    z-index:6;display:flex;gap:4px;padding:4px;border-radius:999px;
+    background:rgba(27,21,33,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    box-shadow:0 4px 18px rgba(0,0,0,.35);}
+  .view-switch button{border:0;cursor:pointer;border-radius:999px;
+    font:700 14px/1 -apple-system,Segoe UI,Roboto,'Noto Sans Georgian',sans-serif;
+    letter-spacing:.02em;color:#EDE7D1;background:transparent;padding:10px 20px;transition:.15s;}
+  .view-switch button.active{background:#EDE7D1;color:#1B1521;}
+  .view-switch button:not(.active):hover{background:rgba(237,231,209,.14);}
+  @media (max-width:600px){
+    .bare-logo{height:42px;top:12px;left:12px;}
+    .view-switch button{padding:9px 16px;font-size:13px;}
+  }
 </style>
 </head>
 <body>
-  <img class="logo" src="logo.png" alt="BARE by Biograpi">
-  <p class="sub">360° საჰაერო ხედები</p>
-  <div class="grid">
-    <a class="card" href="1.html"><div class="num">360° · 01</div><div class="title">პანორამა 1</div><div class="go">გახსნა →</div></a>
-    <a class="card" href="2.html"><div class="num">360° · 02</div><div class="title">პანორამა 2</div><div class="go">გახსნა →</div></a>
-  </div>
-  <footer>BARE · BY BIOGRAPI</footer>
+<div id="pano"></div>
+<img class="bare-logo" src="logo.png" alt="BARE by Biograpi">
+<div class="view-switch">
+  <button id="btn-view1" class="active" onclick="go('view1')">ხედი 1</button>
+  <button id="btn-view2" onclick="go('view2')">ხედი 2</button>
+</div>
+<script src="pannellum.js"></script>
+<script>
+  function scene(base){return{
+    type:'multires',
+    multiRes:{basePath:base,path:'/%l/%s%y_%x',fallbackPath:'/fallback/%s',
+      extension:'jpg',tileResolution:512,maxLevel:4,cubeResolution:3816},
+    hfov:100
+  };}
+  var viewer = pannellum.viewer('pano', {
+    default:{
+      firstScene:'view1', autoLoad:true, autoRotate:-2, autoRotateInactivityDelay:3500,
+      backgroundColor:[0.486,0.192,0.275], sceneFadeDuration:900,
+      showZoomCtrl:true, showFullscreenCtrl:true, keyboardZoom:true, mouseZoom:true,
+      minHfov:50, maxHfov:120, compass:false
+    },
+    scenes:{ view1: scene('bare1'), view2: scene('bare2') }
+  });
+  function go(id){ viewer.loadScene(id); }
+  viewer.on('scenechange', function(id){
+    document.getElementById('btn-view1').classList.toggle('active', id==='view1');
+    document.getElementById('btn-view2').classList.toggle('active', id==='view2');
+  });
+</script>
 </body>
 </html>
