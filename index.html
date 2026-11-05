@@ -3,6 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script>
+/* Drop Google Conversion Linker / ads click ids (_gl, _gcl_*, gclid, …) so the
+   address bar stays short and shareable. Keeps lang and every other param, plus
+   the hash. replaceState only — no reload — and runs before the logo reads ?lang=. */
+(function () {
+  try {
+    var s = location.search;
+    if (!s || s.length < 2 || !history.replaceState) return;
+    var kept = [], dropped = false, parts = s.substring(1).split("&");
+    for (var i = 0; i < parts.length; i++) {
+      var p = parts[i];
+      if (!p) continue;
+      var eq = p.indexOf("=");
+      var key = eq < 0 ? p : p.substring(0, eq);
+      try { key = decodeURIComponent(key.replace(/\+/g, " ")); } catch (e) {}
+      if (/^(?:_gl|gclid|dclid|gbraid|wbraid|gclsrc)$/i.test(key) || /^_gcl_/i.test(key)) dropped = true;
+      else kept.push(p);
+    }
+    if (!dropped) return;
+    history.replaceState(history.state, "", location.pathname + (kept.length ? "?" + kept.join("&") : "") + location.hash);
+  } catch (e) {}
+})();
+</script>
 <title>Bare 360° | Biograpi Living</title>
 <link rel="stylesheet" href="pannellum.css">
 <style>
